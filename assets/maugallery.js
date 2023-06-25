@@ -144,13 +144,13 @@
       let tagItems = '<li class="nav-item"><span class="nav-link active active-tag" data-images-toggle="all">Tous</span></li>';
 
       $.each(tags, function (index, value) {
-        let activeClass = index === 0 ? 'active' : ''; // ajout de la classe active uniquement au premier (0)
+        // let activeClass = index === 0 ? 'active' : ''; // ajout de la classe active uniquement au premier (0)
         tagItems += `<li class="nav-item">
           <span class="nav-link" data-images-toggle="${value}">${value}</span></li>`;
       });
 
       $(document).on('click', '.nav-link', function () {
-        $('.nav-link').removeClass('active'); // Suppression de la classe "active" pour tous les éléments
+        $('.nav-link').removeClass('active'); // Supprime de la classe "active" pour tous les éléments
         $(this).addClass('active'); // ajout de la classe "active" à l'élément séléctionné
       });
 
