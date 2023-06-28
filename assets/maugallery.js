@@ -5,22 +5,36 @@
     return this.each(function () {
       $.fn.mauGallery.methods.createRowWrapper($(this));
       if (options.lightBox) {
-        $.fn.mauGallery.methods.createLightBox($(this), options.lightboxId, options.navigation);
+        $.fn.mauGallery.methods.createLightBox(
+          $(this),
+          options.lightboxId,
+          options.navigation
+        );
       }
       $.fn.mauGallery.listeners(options);
 
-      $(this).children(".gallery-item").each(function (index) {
-        $.fn.mauGallery.methods.responsiveImageItem($(this));
-        $.fn.mauGallery.methods.moveItemInRowWrapper($(this));
-        $.fn.mauGallery.methods.wrapItemInColumn($(this), options.columns);
-        var theTag = $(this).data("gallery-tag");
-        if (options.showTags && theTag !== undefined && tagsCollection.indexOf(theTag) === -1) {
-          tagsCollection.push(theTag);
-        }
-      });
+      $(this)
+        .children(".gallery-item")
+        .each(function (index) {
+          $.fn.mauGallery.methods.responsiveImageItem($(this));
+          $.fn.mauGallery.methods.moveItemInRowWrapper($(this));
+          $.fn.mauGallery.methods.wrapItemInColumn($(this), options.columns);
+          var theTag = $(this).data("gallery-tag");
+          if (
+            options.showTags &&
+            theTag !== undefined &&
+            tagsCollection.indexOf(theTag) === -1
+          ) {
+            tagsCollection.push(theTag);
+          }
+        });
 
       if (options.showTags) {
-        $.fn.mauGallery.methods.showItemTags($(this), options.tagsPosition, tagsCollection);
+        $.fn.mauGallery.methods.showItemTags(
+          $(this),
+          options.tagsPosition,
+          tagsCollection
+        );
       }
 
       $(this).fadeIn(500);
@@ -33,7 +47,7 @@
     lightboxId: null,
     showTags: true,
     tagsPosition: "bottom",
-    navigation: true
+    navigation: true,
   };
 
   $.fn.mauGallery.listeners = function (options) {
@@ -44,8 +58,12 @@
     });
 
     $(".gallery").on("click", ".nav-link", $.fn.mauGallery.methods.filterByTag);
-    $(".gallery").on("click", ".mg-prev", () => $.fn.mauGallery.methods.prevImage(options.lightboxId));
-    $(".gallery").on("click", ".mg-next", () => $.fn.mauGallery.methods.nextImage(options.lightboxId));
+    $(".gallery").on("click", ".mg-prev", () =>
+      $.fn.mauGallery.methods.prevImage(options.lightboxId)
+    );
+    $(".gallery").on("click", ".mg-next", () =>
+      $.fn.mauGallery.methods.nextImage(options.lightboxId)
+    );
   };
 
   $.fn.mauGallery.methods = {
@@ -56,17 +74,25 @@
     },
     wrapItemInColumn(element, columns) {
       if (columns.constructor === Number) {
-        element.wrap(`<div class='item-column mb-4 col-${Math.ceil(12 / columns)}'></div>`);
+        element.wrap(
+          `<div class='item-column mb-4 col-${Math.ceil(12 / columns)}'></div>`
+        );
       } else if (columns.constructor === Object) {
         var columnClasses = "";
         if (columns.xs) columnClasses += ` col-${Math.ceil(12 / columns.xs)}`;
-        if (columns.sm) columnClasses += ` col-sm-${Math.ceil(12 / columns.sm)}`;
-        if (columns.md) columnClasses += ` col-md-${Math.ceil(12 / columns.md)}`;
-        if (columns.lg) columnClasses += ` col-lg-${Math.ceil(12 / columns.lg)}`;
-        if (columns.xl) columnClasses += ` col-xl-${Math.ceil(12 / columns.xl)}`;
+        if (columns.sm)
+          columnClasses += ` col-sm-${Math.ceil(12 / columns.sm)}`;
+        if (columns.md)
+          columnClasses += ` col-md-${Math.ceil(12 / columns.md)}`;
+        if (columns.lg)
+          columnClasses += ` col-lg-${Math.ceil(12 / columns.lg)}`;
+        if (columns.xl)
+          columnClasses += ` col-xl-${Math.ceil(12 / columns.xl)}`;
         element.wrap(`<div class='item-column mb-4${columnClasses}'></div>`);
       } else {
-        console.error(`Columns should be defined as numbers or objects. ${typeof columns} is not supported.`);
+        console.error(
+          `Columns should be defined as numbers or objects. ${typeof columns} is not supported.`
+        );
       }
     },
     moveItemInRowWrapper(element) {
@@ -78,11 +104,15 @@
       }
     },
     openLightBox(element, lightboxId) {
-      $(`#${lightboxId}`).find(".lightboxImage").attr("src", element.attr("src"));
+      $(`#${lightboxId}`)
+        .find(".lightboxImage")
+        .attr("src", element.attr("src"));
       $(`#${lightboxId}`).modal("toggle");
     },
     prevImage() {
-      const activeImage = $("img.gallery-item").filter((index, el) => $(el).attr("src") === $(".lightboxImage").attr("src"));
+      const activeImage = $("img.gallery-item").filter(
+        (index, el) => $(el).attr("src") === $(".lightboxImage").attr("src")
+      );
       const activeTag = $(".tags-bar span.active-tag").data("images-toggle");
       const imagesCollection = [];
 
@@ -100,12 +130,18 @@
         });
       }
 
-      const index = imagesCollection.findIndex((el) => $(activeImage).attr("src") === $(el).attr("src"));
-      const next = imagesCollection[index] || imagesCollection[imagesCollection.length - 1];
+      const index = imagesCollection.findIndex(
+        (el) => $(activeImage).attr("src") === $(el).attr("src")
+      );
+      const next =
+        imagesCollection[index] ||
+        imagesCollection[imagesCollection.length - 1];
       $(".lightboxImage").attr("src", $(next).attr("src"));
     },
     nextImage() {
-      const activeImage = $("img.gallery-item").filter((index, el) => $(el).attr("src") === $(".lightboxImage").attr("src"));
+      const activeImage = $("img.gallery-item").filter(
+        (index, el) => $(el).attr("src") === $(".lightboxImage").attr("src")
+      );
       const activeTag = $(".tags-bar span.active-tag").data("images-toggle");
       const imagesCollection = [];
 
@@ -123,25 +159,35 @@
         });
       }
 
-      const index = imagesCollection.findIndex((el) => $(activeImage).attr("src") === $(el).attr("src"));
+      const index = imagesCollection.findIndex(
+        (el) => $(activeImage).attr("src") === $(el).attr("src")
+      );
       const next = imagesCollection[index] || imagesCollection[0];
       $(".lightboxImage").attr("src", $(next).attr("src"));
     },
     createLightBox(gallery, lightboxId, navigation) {
-      gallery.append(`<div class="modal fade" id="${lightboxId ? lightboxId : "galleryLightbox"}" tabindex="-1" role="dialog" aria-hidden="true">
+      gallery.append(`<div class="modal fade" id="${lightboxId ? lightboxId : "galleryLightbox"
+        }" tabindex="-1" role="dialog" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-body">
-                ${navigation ? '<div class="mg-prev" style="cursor:pointer;position:absolute;top:50%;left:-15px;background:white;"><</div>' : '<span style="display:none;" />'}
+                ${navigation
+          ? '<div class="mg-prev" style="cursor:pointer;position:absolute;top:50%;left:-15px;background:white;"><</div>'
+          : '<span style="display:none;" />'
+        }
                 <img class="lightboxImage img-fluid" alt="Contenu de l'image affichée dans la modale au clique"/>
-                ${navigation ? '<div class="mg-next" style="cursor:pointer;position:absolute;top:50%;right:-15px;background:white;}">></div>' : '<span style="display:none;" />'}
+                ${navigation
+          ? '<div class="mg-next" style="cursor:pointer;position:absolute;top:50%;right:-15px;background:white;}">></div>'
+          : '<span style="display:none;" />'
+        }
               </div>
             </div>
           </div>s
         </div>`);
     },
     showItemTags(gallery, position, tags) {
-      let tagItems = '<li class="nav-item"><span class="nav-link active active-tag" data-images-toggle="all">Tous</span></li>';
+      let tagItems =
+        '<li class="nav-item"><span class="nav-link active active-tag" data-images-toggle="all">Tous</span></li>';
 
       $.each(tags, function (index, value) {
         // let activeClass = index === 0 ? 'active' : ''; // ajout de la classe active uniquement au premier (0)
@@ -149,11 +195,10 @@
           <span class="nav-link" data-images-toggle="${value}">${value}</span></li>`;
       });
 
-      $(document).on('click', '.nav-link', function () {
-        $('.nav-link').removeClass('active'); // Supprime de la classe "active" pour tous les éléments
-        $(this).addClass('active'); // ajout de la classe "active" à l'élément séléctionné
+      $(document).on("click", ".nav-link", function () {
+        $(".nav-link").removeClass("active"); // Supprime de la classe "active" pour tous les éléments
+        $(this).addClass("active"); // ajout de la classe "active" à l'élément séléctionné
       });
-
 
       const tagsRow = `<ul class="my-4 tags-bar nav nav-pills">${tagItems}</ul>`;
 
@@ -184,6 +229,6 @@
           $(this).parents(".item-column").show(300);
         }
       });
-    }
+    },
   };
 })(jQuery);
