@@ -109,52 +109,28 @@
         .attr("src", element.attr("src"));
       $(`#${lightboxId}`).modal("toggle");
     },
-    prevImage() {
-      const activeImage = $("img.gallery-item").filter(
-        (index, el) => $(el).attr("src") === $(".lightboxImage").attr("src")
-      );
-      const activeTag = $(".tags-bar span.active-tag").data("images-toggle");
-      const imagesCollection = [];
 
-      if (activeTag === "all") {
-        $(".item-column").each(function () {
-          if ($(this).children("img").length) {
-            imagesCollection.push($(this).children("img"));
-          }
-        });
-      } else {
-        $(".item-column").each(function () {
-          if ($(this).children("img").data("gallery-tag") === activeTag) {
-            imagesCollection.push($(this).children("img"));
-          }
-        });
-      }
-
-      const index = imagesCollection.findIndex(
-        (el) => $(activeImage).attr("src") === $(el).attr("src")
-      );
-      const next =
-        imagesCollection[index] ||
-        imagesCollection[imagesCollection.length - 1];
-      $(".lightboxImage").attr("src", $(next).attr("src"));
-    },
+    // REGLAGE DU PROBLEME DE CAROUSEL DANS LA GALLERY DE L'IMAGE , UTILISATION DE ".lightboxImage" POUR CIBLER L'IMAGE PRESENTE DANS LA MODALE POUR PASSER D'UNE IMAGE A UNE AUTRE
     nextImage() {
-      const activeImage = $("img.gallery-item").filter(
-        (index, el) => $(el).attr("src") === $(".lightboxImage").attr("src")
-      );
+      const activeImage = $(".lightboxImage"); // Utilisation de lightboxImage pour séléctionner l'image affichée dans la modale au lieu de ".gallery-item img" qui fais référence a "img" dans "gallery"
       const activeTag = $(".tags-bar span.active-tag").data("images-toggle");
       const imagesCollection = [];
 
       if (activeTag === "all") {
         $(".item-column").each(function () {
-          if ($(this).children("img").length) {
-            imagesCollection.push($(this).children("img"));
+          const imageReference = $(this).children("img"); // Mise en place d'une variable "imageReference" afin de stocker la référence de l'image ce qui permet d'éviter de chercher à chaque fois l'image de manière répétée
+          if (imageReference.length) {
+            imagesCollection.push(imageReference); // On push l'image dans le tableau
           }
         });
       } else {
         $(".item-column").each(function () {
-          if ($(this).children("img").data("gallery-tag") === activeTag) {
-            imagesCollection.push($(this).children("img"));
+          // Stock référence élement enfant (img) dans la variable imageReference
+          const imageReference = $(this).children("img");
+          // Vérification de la valeur de l'attribut "data-gallery-tag" afin de voir si  l'image correspond à "activeTag" : activeTag = $(".tags-bar span.active-tag").data("images-toggle");
+          if (imageReference.data("gallery-tag") === activeTag) {
+            // On push l'élément (img) dans le tableau
+            imagesCollection.push(imageReference);
           }
         });
       }
@@ -162,24 +138,60 @@
       const index = imagesCollection.findIndex(
         (el) => $(activeImage).attr("src") === $(el).attr("src")
       );
-      const next = imagesCollection[index] || imagesCollection[0];
-      $(".lightboxImage").attr("src", $(next).attr("src"));
+      const next = imagesCollection[index + 1] || imagesCollection[0]; // Modification de l'obtention des index pour les images (ici on utilise index  + 1 pour cibler l'image suivante lorsque l'on clique sur la flêche de droite)
+      $(".lightboxImage").attr("src", $(next).attr("src")); // Cette modification permet de passer d'une image à l'autre dans le tableau de "imageCollection" grâce aux index (+1 car ici on cherche l'image suivante du carousel)
+    },
+
+    prevImage() {
+      const activeImage = $(".lightboxImage"); // Utilisation de lightboxImage pour séléctionner l'image affichée dans la modale au lieu de ".gallery-item img" qui fais référence a "img" dans "gallery"
+      const activeTag = $(".tags-bar span.active-tag").data("images-toggle");
+      const imagesCollection = [];
+
+      if (activeTag === "all") {
+        $(".item-column").each(function () {
+          const imageReference = $(this).children("img"); // Mise en place d'une variable "imageReference" afin de stocker la référence de l'image ce qui permet d'éviter de chercher à chaque fois l'image de manière répétée
+          if (imageReference.length) {
+            imagesCollection.push(imageReference); // On push l'image dans le tableau
+          }
+        });
+      } else {
+        $(".item-column").each(function () {
+          // Stock référence élement enfant (img) dans la variable imageReference
+          const imageReference = $(this).children("img");
+          // Vérification de la valeur de l'attribut "data-gallery-tag" afin de voir si  l'image correspond à "activeTag" : activeTag = $(".tags-bar span.active-tag").data("images-toggle");
+          if (imageReference.data("gallery-tag") === activeTag) {
+            // On push l'élément (img) dans le tableau
+            imagesCollection.push(imageReference);
+          }
+        });
+      }
+
+      const index = imagesCollection.findIndex(
+        (el) => $(activeImage).attr("src") === $(el).attr("src")
+      );
+      const prev = // Modification de l'obtention des index pour les images (ici on utilise index - 1 pour cibler l'image précèdente lorsque l'on clique sur la flêche de gauche)
+        imagesCollection[index - 1] ||
+        imagesCollection[imagesCollection.length - 1];
+      $(".lightboxImage").attr("src", $(prev).attr("src")); // Cette modification permet de passer d'une image à l'autre dans le tableau de "imageCollection" grâce aux index (-1 car ici on cherche l'image précèdente du carousel)
     },
     createLightBox(gallery, lightboxId, navigation) {
-      gallery.append(`<div class="modal fade" id="${lightboxId ? lightboxId : "galleryLightbox"
-        }" tabindex="-1" role="dialog" aria-hidden="true">
+      gallery.append(`<div class="modal fade" id="${
+        lightboxId ? lightboxId : "galleryLightbox"
+      }" tabindex="-1" role="dialog" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-body">
-                ${navigation
-          ? '<div class="mg-prev" style="cursor:pointer;position:absolute;top:50%;left:-15px;background:white;"><</div>'
-          : '<span style="display:none;" />'
-        }
+                ${
+                  navigation
+                    ? '<div class="mg-prev" style="cursor:pointer;position:absolute;top:50%;left:-15px;background:white;"><</div>'
+                    : '<span style="display:none;" />'
+                }
                 <img class="lightboxImage img-fluid" alt="Contenu de l'image affichée dans la modale au clique"/>
-                ${navigation
-          ? '<div class="mg-next" style="cursor:pointer;position:absolute;top:50%;right:-15px;background:white;}">></div>'
-          : '<span style="display:none;" />'
-        }
+                ${
+                  navigation
+                    ? '<div class="mg-next" style="cursor:pointer;position:absolute;top:50%;right:-15px;background:white;}">></div>'
+                    : '<span style="display:none;" />'
+                }
               </div>
             </div>
           </div>s
